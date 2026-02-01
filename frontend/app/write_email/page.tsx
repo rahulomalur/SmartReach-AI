@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavigationMenu from '../components/NavigationMenu';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FaCode, FaEye, FaCopy } from 'react-icons/fa';
 import { Input } from '@/components/ui/input';
-import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
@@ -20,8 +19,8 @@ function EmailPage() {
       router.push("/login");
     }
   }, []);
-  
-  const [forlgata, setForlgata] =useState<{
+
+  const [forlgata, setForlgata] = useState<{
     category: string,
     companyURL: string,
     tone: string,
@@ -49,9 +48,9 @@ function EmailPage() {
 
 
   const [viewMode, setViewMode] = useState<'RAW' | 'HTML'>('RAW');
-  
 
-  const [showErrors, setShowErrors] = useState(false); 
+
+  const [showErrors, setShowErrors] = useState(false);
   const [isEmailGenerated, setIsEmailGenerated] = useState(false);
   const [isTimeDataAdded, setIsTimeDataAdded] = useState(false);
 
@@ -67,10 +66,10 @@ function EmailPage() {
 
   const handleTextChange = (field: string) => (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     let text = e.target.value;
-    let words = text.trim().split(/\s+/); 
+    let words = text.trim().split(/\s+/);
 
     if (words.length > 100) {
-      text = words.slice(0, 100).join(" "); 
+      text = words.slice(0, 100).join(" ");
     }
 
     setForlgata((prev) => ({ ...prev, [field]: e.target.value }));
@@ -140,7 +139,7 @@ function EmailPage() {
             value={forlgata.companyURL}
             onChange={handleTextChange('companyURL')}
             required
-          />          
+          />
         </div>
       </div>
 
@@ -150,7 +149,7 @@ function EmailPage() {
         </Label>
         <Select name="category" value={forlgata.category} onValueChange={handleSelectChange('category')}>
           <SelectTrigger className="w-full h-14 mt-2 bg-gray-100 p-2 border border-gray-300 rounded-lg">
-            <SelectValue placeholder="Choose"  />
+            <SelectValue placeholder="Choose" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ecommerce">E-commerce</SelectItem>
@@ -356,26 +355,26 @@ function EmailPage() {
   const updateEmail = async () => {
     try {
       // Function to get the CSRF token from cookies
-    //   const getCsrfToken = () => {
-    //     const value = `; ${document.cookie}`;
-    //     const parts = value.split(`; csrftoken=`);
-    //     if (parts.length === 2) return parts.pop().split(';').shift();
-    //     return null;
-    //   };
-  
-    //   const csrfToken = getCsrfToken();
-    //   if (!csrfToken) {
-    //     throw new Error('CSRF token not found in cookies');
-    //   }
-  
+      //   const getCsrfToken = () => {
+      //     const value = `; ${document.cookie}`;
+      //     const parts = value.split(`; csrftoken=`);
+      //     if (parts.length === 2) return parts.pop().split(';').shift();
+      //     return null;
+      //   };
+
+      //   const csrfToken = getCsrfToken();
+      //   if (!csrfToken) {
+      //     throw new Error('CSRF token not found in cookies');
+      //   }
+
       console.log('Updating email with subject:', emailSubject);
       console.log('Updating email with body:', emailBody);
-  
+
       const response = await fetch('/api/update-email/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-        //   'X-CSRFToken': csrfToken, // Add CSRF token header
+          //   'X-CSRFToken': csrfToken, // Add CSRF token header
         },
         // credentials: 'include', // Ensure cookies (including csrftoken) are sent
         body: JSON.stringify({
@@ -383,11 +382,11 @@ function EmailPage() {
           Body: emailBody,
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to update email');
       }
-  
+
       const data = await response.json();
       console.log('Email updated successfully:', data);
     } catch (error) {
@@ -452,12 +451,12 @@ function EmailPage() {
       toast.error('Please generate an email first.');
       return;
     }
-    
+
     if (viewMode !== 'HTML') {
       toast.error('Switch to HTML view to copy HTML content.');
       return;
     }
-    
+
     try {
       navigator.clipboard.writeText(emailBody);
       toast.success('HTML copied to clipboard!');
@@ -466,7 +465,7 @@ function EmailPage() {
       toast.error('Failed to copy to clipboard. Please try again.');
     }
   };
-  
+
 
   return (
     <div className="flex flex-col justify-start w-screen h-screen">
@@ -527,18 +526,16 @@ function EmailPage() {
                   disabled={!isEmailGenerated}
                 />
                 <div
-                  className={`relative w-11 h-6 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-checked:bg-blue-600 ${
-                    isEmailGenerated ? 'bg-gray-200' : 'bg-gray-400 cursor-not-allowed'
-                  }`}
+                  className={`relative w-11 h-6 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-checked:bg-blue-600 ${isEmailGenerated ? 'bg-gray-200' : 'bg-gray-400 cursor-not-allowed'
+                    }`}
                 ></div>
                 <span className="ml-3 text-white text-lg">HTML</span>
               </label>
               <Button
-                className={`ml-4 text-sm flex items-center gap-1 ${
-                  viewMode === 'HTML' && isEmailGenerated 
-                    ? 'bg-blue-600 hover:bg-blue-700' 
+                className={`ml-4 text-sm flex items-center gap-1 ${viewMode === 'HTML' && isEmailGenerated
+                    ? 'bg-blue-600 hover:bg-blue-700'
                     : 'bg-gray-400 cursor-not-allowed'
-                }`}
+                  }`}
                 onClick={copyHtmlToClipboard}
                 disabled={viewMode !== 'HTML' || !isEmailGenerated}
               >

@@ -1132,3 +1132,9 @@ def reset_password(request):
         return Response({"message": "Password reset successfully."})
     except User.DoesNotExist:
         return Response({"error": "User with this email does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+def health_check(request):
+    """Health check endpoint for Railway deployment"""
+    return Response({"status": "healthy"}, status=status.HTTP_200_OK)

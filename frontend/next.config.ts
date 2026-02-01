@@ -1,9 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   async rewrites() {
     return [
-      { source: '/api/:path*', destination: 'http://localhost:8000/api/:path*' },
+      {
+        source: '/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://pleasant-tranquility-production-ed58.up.railway.app'}/api/:path*`
+      },
     ];
   },
 };

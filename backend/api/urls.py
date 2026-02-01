@@ -29,11 +29,13 @@ from .views import (
     get_username,
     forgot_password,
     verify_otp,
-    reset_password
+    reset_password,
+    health_check
 
 )
 
 urlpatterns = [
+    path('health/', health_check, name='health-check'),
     path('user-login/', login_view, name='user-login'),
     path('auth-complete/', auth_complete, name='auth-complete'),
     path('check-auth/', check_auth, name='check-auth'),

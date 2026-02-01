@@ -23,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2f#z$_md2-tr0gs+z6%4t0^r05$1#*2@6-#pm%$1f@n%mrpzgb'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-2f#z$_md2-tr0gs+z6%4t0^r05$1#*2@6-#pm%$1f@n%mrpzgb')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['smartreachai.social', '172.30.2.113', 'localhost']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'smartreachai.social,172.30.2.113,localhost').split(',')
 
 
 # Application definition
@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -80,10 +81,12 @@ AUTHENTICATION_BACKENDS = (
 
 # CORS Settings
 CORS_ALLOW_CREDENTIALS = True
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://smartreachai.social"
-    
+    "https://smartreachai.social",
+    "https://frontend-azure-iota-20.vercel.app",
+    FRONTEND_URL,
 ]
 CORS_ALLOW_HEADERS = [
     'accept',
@@ -105,11 +108,11 @@ SOCIAL_AUTH_FIELDS_STORED_IN_SESSION = ['state']
 
 # URLs
 LOGIN_URL = '/login'
-LOGIN_REDIRECT_URL = 'http://localhost:3000'
+LOGIN_REDIRECT_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
 LOGOUT_URL = 'logout'
-LOGOUT_REDIRECT_URL = 'http://localhost:3000'
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'http://localhost:3000'
-SOCIAL_AUTH_LOGIN_ERROR_URL = 'http://localhost:3000/error'
+LOGOUT_REDIRECT_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+SOCIAL_AUTH_LOGIN_ERROR_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000') + '/error'
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -219,14 +222,17 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = GOOGLE_OAUTH2_CLIENT_SECRET
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'http://localhost:8000/social-auth/complete/google-oauth2/'
-SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = ['localhost:3000', 'localhost:8000', 'smartreachai.social']
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = os.environ.get('BACKEND_URL', 'http://localhost:8000') + '/social-auth/complete/google-oauth2/'
+SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = ['localhost:3000', 'localhost:8000', 'smartreachai.social', 'frontend-azure-iota-20.vercel.app', 'pleasant-tranquility-production-ed58.up.railway.app']
 
 # Additional Security Settings
-CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+CSRF_COOKIE_SECURE = not DEBUG
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
-    'http://smartreachai.social'
+    "http://localhost:8000",
+    "https://smartreachai.social",
+    "https://frontend-azure-iota-20.vercel.app",
+    "https://pleasant-tranquility-production-ed58.up.railway.app",
 ]
 
 # Debug Settings
@@ -251,14 +257,16 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'http://localhost:8000/social-auth/comp
 
 # URLs
 LOGIN_URL = '/login'
-LOGIN_REDIRECT_URL = 'http://localhost:3000/write-email/'
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'http://localhost:8000/api/auth-complete/'
-SOCIAL_AUTH_LOGIN_ERROR_URL = 'http://localhost:3000/error'
+LOGIN_REDIRECT_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000') + '/write-email/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = os.environ.get('BACKEND_URL', 'http://localhost:8000') + '/api/auth-complete/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000') + '/error'
 
 # CORS Settings
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://frontend-azure-iota-20.vercel.app",
+    FRONTEND_URL,
 ]
 
 # Additional Settings
