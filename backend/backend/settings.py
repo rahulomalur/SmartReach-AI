@@ -139,25 +139,34 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+import dj_database_url
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': database,
-        'USER': user,
-        'PASSWORD': password,
-        'HOST': host,
-        'PORT': port,
-    },
-    'testdb': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': test_database,
-        'USER': test_user,
-        'PASSWORD': test_password,
-        'HOST': test_host,
-        'PORT': test_port,
+# Use DATABASE_URL if available (for Render/Heroku), otherwise use individual settings
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': database,
+            'USER': user,
+            'PASSWORD': password,
+            'HOST': host,
+            'PORT': port,
+        },
+        'testdb': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': test_database,
+            'USER': test_user,
+            'PASSWORD': test_password,
+            'HOST': test_host,
+            'PORT': test_port,
+        }
+    }
 
 
 # Password validation
